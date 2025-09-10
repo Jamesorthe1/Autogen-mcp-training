@@ -29,7 +29,7 @@ The script follows these main steps:
 6.  **FAISS Indexing:** Builds FAISS indexes for each data modality with generated embeddings.
 7.  **Interactive Query Loop:** Enters a loop to handle user queries:
     *   Prompts the user to enter a query and select a search type ('location', 'multimodal', or 'legal').
-    *   **Legal Document Summarization:** If 'legal' is selected, prompts for a filename in the legal document directory, extracts text from the specified PDF or TXT file, and sends it to the MCP client for summarization.
+    *   **Legal Document Summarization:** If 'legal' is selected, MCP client is called and new tab is opened using streamlit to host a site for uploading legal documents for summarization.
     *   **Location Search:** If 'location' is selected, extracts a location from the query, performs an image search, displays images, and generates and displays a map for the location. Optionally calculates and displays travel time and route from a source location.
     *   **Multimodal Search:** If 'multimodal' is selected, generates a query embedding, searches the FAISS indexes for relevant local data, includes a web search fallback if needed, and generates a response using the Gemini API based on the query and retrieved context.
     *   Exits the loop if the user types 'quit'.
