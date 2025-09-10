@@ -1,0 +1,17 @@
+google-generativeai
+python-dotenv
+Pillow
+torch
+numpy
+faiss-cpu
+spacy
+transformers
+openl3
+soundfile
+folium
+geopy
+requests
+polyline
+pdfminer.six
+opencv-python
+pydub
