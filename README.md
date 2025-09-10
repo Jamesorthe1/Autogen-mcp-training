@@ -1,11 +1,11 @@
 %%writefile README.txt
 # Multimodal Tourism RAG with MCP Client
 
-This Python script implements a multimodal Retrieval-Augmented Generation (RAG) system focused on tourism, integrating various data types (text, images, video frames, audio segments) and connecting to a Model Context Protocol (MCP) client for legal document summarization.
+This Python script implements a multimodal Retrieval-Augmented Generation (RAG) system focused on tourism, integrating various data types (text, images, video frames and audio segments).
 
 ## Purpose
 
-The primary purpose of this script is to demonstrate a RAG system capable of processing and retrieving information from diverse data sources. It utilizes multimodal embeddings and FAISS indexing for efficient similarity search. Additionally, it includes functionalities for location-based searches, displaying maps, calculating travel times, and summarizing legal documents via an external MCP client.
+The primary purpose of this script is to demonstrate a RAG system capable of processing and retrieving information from diverse data sources. It utilizes multimodal embeddings and FAISS indexing for efficient similarity search. Additionally, it includes functionalities for location-based searches, displaying maps, calculating travel times.
 
 ## Features
 
@@ -15,7 +15,6 @@ The primary purpose of this script is to demonstrate a RAG system capable of pro
 - **Multimodal Retrieval:** Supports searching across different modalities using a query embedding and FAISS indexes. Includes a relevance threshold for filtering results and a web search fallback.
 - **Gemini Integration:** Utilizes the Gemini API to generate responses based on the user's query and the retrieved multimodal context.
 - **Location-Based Functionality:** Extracts locations from queries, performs image searches for locations, and displays interactive maps using Folium. Calculates travel time and route using OSRM.
-- **Legal Document Summarization:** Connects to an external Model Context Protocol (MCP) client to summarize legal documents (PDF and TXT) from a designated directory.
 
 ## Flow
 
@@ -29,7 +28,6 @@ The script follows these main steps:
 6.  **FAISS Indexing:** Builds FAISS indexes for each data modality with generated embeddings.
 7.  **Interactive Query Loop:** Enters a loop to handle user queries:
     *   Prompts the user to enter a query and select a search type ('location', 'multimodal', or 'legal').
-    *   **Legal Document Summarization:** If 'legal' is selected, MCP client is called and new tab is opened using streamlit to host a site for uploading legal documents for summarization.
     *   **Location Search:** If 'location' is selected, extracts a location from the query, performs an image search, displays images, and generates and displays a map for the location. Optionally calculates and displays travel time and route from a source location.
     *   **Multimodal Search:** If 'multimodal' is selected, generates a query embedding, searches the FAISS indexes for relevant local data, includes a web search fallback if needed, and generates a response using the Gemini API based on the query and retrieved context.
     *   Exits the loop if the user types 'quit'.
@@ -37,10 +35,6 @@ The script follows these main steps:
 ## Code Documentation
 
 This section provides a more detailed look at the key functions and classes within the script.
-
-### `summarize_via_mcp(text)`
-
-This function sends text to an external Model Context Protocol (MCP) client for summarization. It makes an HTTP POST request to a specified endpoint and returns the summary received from the client.
 
 ### `load_multimodal_data_from_directory(data_directory)`
 
@@ -95,7 +89,6 @@ This block orchestrates the entire process:
 3. Builds FAISS indexes for each modality.
 4. Enters an interactive loop to accept user queries.
 5. Based on user input, it either:
-    - Summarizes a legal document using the MCP client.
     - Performs location-based tasks (image search, map, travel time).
     - Performs a multimodal RAG search using the FAISS indexes and web search fallback, then generates a response with Gemini.
     - Exits the loop if the user types 'quit'.
