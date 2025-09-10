@@ -26,20 +26,6 @@ import tempfile # Import tempfile to create temporary files
 # from google.colab import files # Import files for Colab file upload - Removed for local environment
 
 
-#Model Context Protocol legal document summarization in progress
-def summarize_via_mcp(text):
-    try:
-        response = requests.post("http://localhost:3000/upload", json={"text": text}, timeout=30)
-        response.raise_for_status()
-        return response.json().get("summary", "No summary returned.")
-    except Exception as e:
-        return f"Error while summarizing: {e}"
-
-# The following line is for demonstration purposes and assumes a function retrieve_document_from_vector_db exists
-# retrieved_doc = retrieve_document_from_vector_db("nda_contract") # This function is not defined in the provided code, but I'm keeping it as is.
-# summary = summarize_via_mcp(retrieved_doc)
-# print("Summary for user:", summary)
-
 
 load_dotenv()  # Loads .env file from project root or specified path
 
@@ -908,12 +894,9 @@ if __name__ == "__main__":
     # Define a relevance threshold
     RELEVANCE_THRESHOLD = 40.0 # Changed threshold to 40.0
 
-    # Define the default directory for legal document uploads
-    LEGAL_DOC_UPLOAD_DIR = os.getenv('LEGAL_DOC_UPLOAD_DIR')
-
     # Implement the interactive query loop
     print("--- Multimodal RAG System Ready ---")
-    print("Enter your queries to search the multimodal data, ask about a location to see a map, or type 'summarize' to summarize a legal document from the upload directory.")
+    print("Enter your queries to search the multimodal data, ask about a location to see a map.")
     print("Type 'quit' to exit the query loop.")
 
     while True:
@@ -923,48 +906,10 @@ if __name__ == "__main__":
             print("Exiting query loop.")
             break
 
-        # Ask user for search type, now including 'legal' option
-        search_type_input = input("Perform 'location', 'multimodal', or 'legal' document summarization search? ").lower()
+        # Ask user for search type, now only 'location' or 'multimodal'
+        search_type_input = input("Perform 'location' or 'multimodal' search? ").lower()
 
-        if search_type_input == 'legal':
-            print(f"Please enter the filename of the legal document in the '{LEGAL_DOC_UPLOAD_DIR}' directory you want to summarize.")
-            file_name = input("Document filename: ")
-            file_path = os.path.join(LEGAL_DOC_UPLOAD_DIR, file_name)
-
-            if os.path.exists(file_path):
-                print(f'Attempting to summarize file: {file_path}')
-
-                file_extension = os.path.splitext(file_path)[1].lower()
-                document_text = ""
-
-                try:
-                    if file_extension == '.pdf':
-                        document_text = extract_text(file_path)
-                    elif file_extension == '.txt':
-                        with open(file_path, 'r', encoding='utf-8') as f:
-                            document_text = f.read()
-                    else:
-                        print(f"Unsupported file type for summarization: {file_extension}. Please provide a path to a PDF or TXT file.")
-                        continue
-
-                    if document_text:
-                        print("Summarizing document...")
-                        summary = summarize_via_mcp(document_text)
-                        print("\n--- Document Summary ---")
-                        print(summary)
-                        print("------------------------")
-                    else:
-                        print("Could not extract text from the document.")
-
-                except Exception as e:
-                    print(f"Error processing file {file_path}: {e}")
-            else:
-                print("Error: File not found at the specified path.")
-
-            # Do not trigger any other reaction
-            continue
-
-        elif search_type_input == 'location':
+        if search_type_input == 'location':
             extracted_location = None
             try:
                 extracted_location = extract_location_from_query(query)
@@ -1031,6 +976,6 @@ if __name__ == "__main__":
             print("Retrieved Data Summary:")
             print(f"Generated Response:\n{generated_response}")
         else:
-            print("Invalid search type. Please enter 'location', 'multimodal', or 'legal'.")
+            print("Invalid search type. Please enter 'location' or 'multimodal'.")
 
         print("-" * 50)
