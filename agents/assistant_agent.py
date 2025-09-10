@@ -1,11 +1,9 @@
 import sys
 import os
 import asyncio
-from dotenv import load_dotenv
-import aiohttp
-import fitz  # PyMuPDF
 import subprocess
 import time
+from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".env")))
@@ -14,57 +12,46 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from autogen_config.llm_config import get_llm_config
 from autogen.agentchat import AssistantAgent
 
-# Constants
-LEGAL_DOCS_DIR = os.getenv("LEGAL_DOCS_DIR")
-if not LEGAL_DOCS_DIR or not os.path.isdir(LEGAL_DOCS_DIR):
-    print("⚠️ LEGAL_DOCS_DIR is not set or does not exist.")
-    sys.exit(1)
+# --- Constants ---
+
+APP_VENV_PYTHON = r"C:\Users\spnes\OneDrive\Documents\industrial training to do\autogen_mcp_project\servers\Indian_Legal_doc_Summarizer\.venv\Scripts\python.exe"
+STREAMLIT_APP_PATH = r"C:\Users\spnes\OneDrive\Documents\industrial training to do\autogen_mcp_project\servers\Indian_Legal_doc_Summarizer\app.py"
 
 MULTIMODAL_VENV_PYTHON = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "..", "servers", "Multimodal_server", ".venv", "Scripts", "python.exe")
 )
+
 AGENTIC_RAG_PATH = os.path.abspath(
     os.path.join(os.path.dirname(__file__), "..", "servers", "Multimodal_server", "Agentic_Rag.py")
 )
 
-# --- Utility Functions ---
+STREAMLIT_PROCESS = None  # Will hold the Streamlit subprocess
 
-def read_latest_document_text():
-    """Returns the text of the most recently modified document in the legal folder."""
-    files = [f for f in os.listdir(LEGAL_DOCS_DIR) if f.lower().endswith((".txt", ".pdf"))]
-    if not files:
-        return None, "⚠️ No legal documents found."
 
-    # Sort files by modification time
-    files.sort(key=lambda f: os.path.getmtime(os.path.join(LEGAL_DOCS_DIR, f)), reverse=True)
-    latest_file = files[0]
-    file_path = os.path.join(LEGAL_DOCS_DIR, latest_file)
+# --- Streamlit Summarizer Service ---
+
+def run_streamlit_app():
+    """Launches the Streamlit app as a background subprocess if not already running."""
+    global STREAMLIT_PROCESS
+
+    if STREAMLIT_PROCESS is not None and STREAMLIT_PROCESS.poll() is None:
+        print("✅ Streamlit summarizer already running.")
+        return
 
     try:
-        if latest_file.lower().endswith(".pdf"):
-            text = ""
-            with fitz.open(file_path) as pdf:
-                for page in pdf:
-                    text += page.get_text()
-        else:
-            with open(file_path, "r", encoding="utf-8") as f:
-                text = f.read()
-        return text, None
+        print("🚀 Launching Streamlit summarizer app as a subservice...")
+        STREAMLIT_PROCESS = subprocess.Popen(
+            [APP_VENV_PYTHON, "-m", "streamlit", "run", STREAMLIT_APP_PATH],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            creationflags=subprocess.CREATE_NEW_CONSOLE  # Windows only — remove if on Linux/macOS
+        )
+        print("🟢 Streamlit summarizer started in background. Visit http://localhost:8501")
     except Exception as e:
-        return None, f"⚠️ Error reading document: {e}"
+        print(f"❌ Failed to start Streamlit app: {e}")
 
-async def summarize_legal_document(text: str) -> str:
-    url = "http://127.0.0.1:8001/indian_legal_summarize"
-    async with aiohttp.ClientSession() as session:
-        try:
-            async with session.post(url, json={"text": text}) as resp:
-                if resp.status == 200:
-                    result = await resp.json()
-                    return result.get("summary", "No summary available.")
-                else:
-                    return f"⚠️ API error {resp.status}: {await resp.text()}"
-        except Exception as e:
-            return f"⚠️ Error calling summarization API: {e}"
+
+# --- Assistant Agent Creation ---
 
 async def create_assistant_agent():
     llm_config = get_llm_config()
@@ -72,8 +59,10 @@ async def create_assistant_agent():
         name="assistant",
         llm_config=llm_config,
     )
-    agent.register_function({"summarize_legal_document": summarize_legal_document})
     return agent
+
+
+# --- Agentic RAG Tool ---
 
 def run_agentic_rag():
     """Launches the Agentic_Rag multimodal tool and waits until it exits."""
@@ -87,11 +76,13 @@ def run_agentic_rag():
     except Exception as e:
         print(f"⚠️ Unexpected error: {e}")
     print("\n↩️ Returned from Agentic RAG. You're back with the Assistant.\n")
-    time.sleep(1)  # Optional: small delay for user experience
+    time.sleep(1)
 
-# --- Main loop ---
+
+# --- Main Application Loop ---
 
 async def main():
+    # Create assistant agent
     assistant = await create_assistant_agent()
 
     while True:
@@ -99,25 +90,34 @@ async def main():
         if user_input.lower() in ("exit", "quit"):
             break
 
-        elif "summarize" in user_input.lower():
-            doc_text, error = read_latest_document_text()
-            if error:
-                print(error)
-                continue
-
-            print("🕐 Summarizing the latest document, please wait...")
-            summary = await summarize_legal_document(doc_text)
-            print(f"\n📝 Summary:\n{summary}\n")
+        # Keywords that should trigger the legal document summarizer
+        elif any(keyword in user_input.lower() for keyword in ["summarize", "legal", "legal document", "legal summary", "legal text"]):
+            run_streamlit_app()
+            print("📄 Legal document summarizer is now running at: http://localhost:8501")
 
         elif "search" in user_input.lower() and "location" in user_input.lower():
             run_agentic_rag()
 
         else:
             print("💬 Passing input to the assistant agent...")
-            response = await assistant.aask(user_input)
-            print("🤖 Assistant:", response)
+            try:
+                response = await assistant.aask(user_input)
+                print("🤖 Assistant:", response)
+            except Exception as e:
+                print(f"⚠️ Assistant error: {e}")
 
-# --- Entry point ---
+    # Clean up Streamlit process on exit
+    if STREAMLIT_PROCESS:
+        print("🛑 Terminating Streamlit summarizer...")
+        STREAMLIT_PROCESS.terminate()
+        try:
+            STREAMLIT_PROCESS.wait(timeout=5)
+        except subprocess.TimeoutExpired:
+            STREAMLIT_PROCESS.kill()
+        print("✅ Streamlit summarizer terminated.")
+
+
+# --- Entry Point ---
 
 if __name__ == "__main__":
     try:
