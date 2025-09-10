@@ -47,8 +47,11 @@ Requirements
 - Install dependencies:
   pip install -r requirements.txt
 
+-Install and run an Ollama server(for ILDS)
+ ollama serve
+ 
 - Add a .env file at the root level with required keys, such as:
-  OPENAI_API_KEY=your-api-key
+  OLLAMA_API_KEY=your-api-key (optional)
 
 -------------------------------------------------------------
 How to Run
