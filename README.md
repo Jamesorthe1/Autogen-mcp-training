@@ -1,5 +1,5 @@
 %%writefile README.txt
-# Multimodal Tourism RAG with MCP Client
+# Multimodal Tourism RAG
 
 This Python script implements a multimodal Retrieval-Augmented Generation (RAG) system focused on tourism, integrating various data types (text, images, video frames and audio segments).
 
