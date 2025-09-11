@@ -53,9 +53,8 @@ except Exception as e:
     print(f"Error retrieving API key from environment or configuring Gemini API: {e}")
 
 # --- Configure Google Search API (Local Environment) ---
-# Hardcoded values for fallback
-HARDCODED_GOOGLE_CLOUD_API_KEY = 'AIzaSyAECC4ASkB6uOZMQXkbiNYqsaHRGf1_K6k'
-HARDCODED_PROGRAMMABLE_SEARCH = '848db169675dd476e'
+# use env values for fallback
+
 
 # --- Location Extraction ---
 # Load a spaCy model (download if not already present)
@@ -1275,3 +1274,4 @@ if __name__ == "__main__":
         agent.orchestrate_workflow(query)
 
         print("-" * 50) # Separator
+
