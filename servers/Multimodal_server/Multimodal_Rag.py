@@ -51,9 +51,7 @@ except Exception as e:
     print(f"Error retrieving API key from environment or configuring Gemini API: {e}")
 
 # --- Configure Google Search API (Local Environment) ---
-# Hardcoded values for fallback
-HARDCODED_GOOGLE_CLOUD_API_KEY = 'AIzaSyAECC4ASkB6uOZMQXkbiNYqsaHRGf1_K6k'
-HARDCODED_PROGRAMMABLE_SEARCH = '848db169675dd476e'
+# use env values for fallback
 
 # --- Load Multimodal Data (Adaptation for local paths and no Colab file upload) ---
 # The Colab file upload part needs to be removed or commented out.
@@ -979,3 +977,4 @@ if __name__ == "__main__":
             print("Invalid search type. Please enter 'location' or 'multimodal'.")
 
         print("-" * 50)
+
