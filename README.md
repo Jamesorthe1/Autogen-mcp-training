@@ -1,42 +1,150 @@
-AI Assistant with Task Routing and Specialized ToolsThis project implements a versatile AI assistant designed to handle various user requests by routing them to specialized tools. It leverages the power of Large Language Models (LLMs) to understand user intent and execute tasks efficiently.FeaturesTask Routing: The core of the assistant is an LLM that classifies user intent and directs the request to the most appropriate tool for a given task.Legal Document Summarizer: A dedicated Streamlit application for summarizing legal documents.Multimodal Location Search: A separate tool that uses Agentic Retrieval-Augmented Generation (RAG) to find and process multimodal information related to locations.Extensible Architecture: The system is built to be easily expanded with new tools and functionalities as needed.Project StructureThe project has a modular structure to keep different functionalities separate and organized:.env: Environment variables for configuration.autogen_requirements.txt: Python package dependencies.agents/: Contains the core agent code.assistant_agent.py: The main assistant script.autogen_config/: Configuration for the LLM.llm_config.py: LLM configuration file.servers/: Contains the separate tool applications.Indian_Legal_doc_Summarizer/: Legal document summarizer application..venv/: Virtual environment for the application.app.py: The Streamlit application script.Multimodal_server/: Multimodal search tool..venv/: Virtual environment for the tool.main.py: The main script for the multimodal tool.SetupFollow these steps to get the project running on your local machine.1. Clone the Repositorygit clone <repository_url>
+# 🤖 AI Assistant with Task Routing and Specialized Tools
+
+A modular AI assistant that intelligently routes user requests to dedicated tools using Large Language Models (LLMs). Built for flexibility, it supports summarization of legal documents, multimodal search, and easy integration of new features.
+
+---
+
+## 📚 Table of Contents
+
+- [Overview](#overview)  
+- [Features](#features)  
+- [Project Structure](#project-structure)  
+- [Setup](#setup)  
+- [Running the Assistant](#running-the-assistant)  
+- [Using the Tools](#using-the-tools)  
+- [Notes](#notes)  
+
+---
+
+## 🧠 Overview
+
+This project implements an AI assistant capable of handling diverse user requests by leveraging LLMs for task classification and tool routing. It includes specialized applications like:
+
+- A **legal document summarizer**
+- A **multimodal search engine**
+- An **extensible architecture** for additional tools
+
+---
+
+## 🚀 Features
+
+- **Task Routing**  
+  Automatically classifies user intent and selects the appropriate tool.
+
+- **Legal Document Summarizer**  
+  A Streamlit app for summarizing Indian legal documents.
+
+- **Multimodal Location Search**  
+  Uses Agentic Retrieval-Augmented Generation (RAG) to process multimodal queries.
+
+- **Extensible Architecture**  
+  Built to integrate new tools easily with minimal changes.
+
+---
+
+## 🗂️ Project Structure
+
+```plaintext
+.
+├── .env
+├── autogen_requirements.txt
+├── agents/
+│   └── assistant_agent.py
+├── autogen_config/
+│   └── llm_config.py
+└── servers/
+    ├── Indian_Legal_doc_Summarizer/
+    │   ├── .venv/
+    │   └── app.py
+    └── Multimodal_server/
+        ├── .venv/
+        └── main.py
+
+⚙️ Getting Started
+🔧 Setup
+
+Clone the Repository
+
+git clone <repository_url>
 cd <repository_directory>
 
 
+Create and Activate a Virtual Environment
 
-2. Create and Activate a Virtual EnvironmentIt's highly recommended to use a virtual environment to manage dependencies.python -m venv .venv
-source .venv/bin/activate  # Use `.venv\Scripts\activate` on Windows
-
-
-
-3. Install DependenciesInstall the required Python packages from the autogen_requirements.txt file.pip install -r autogen_requirements.txt
+python -m venv .venv
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 
 
+Install Dependencies
 
-4. Configure Environment VariablesCreate a .env file in the root directory of the project. This file will hold all the necessary configuration variables, including API URLs and file paths.OLLAMA_API_BASE_URL=http://localhost:11434/v1
+pip install -r autogen_requirements.txt
+
+
+Configure Environment Variables
+
+Create a .env file in the root directory and add the following:
+
+OLLAMA_API_BASE_URL=http://localhost:11434/v1
 OLLAMA_API_KEY=
 
-# --- Constants for Indian Legal Document Summarizer (ILDS) ---
-APP_VENV_PYTHON=/path/to/your/Indian_Legal_doc_Summarizer/.venv/bin/python
-STREAMLIT_APP_PATH=/path/to/your/Indian_Legal_doc_Summarizer/app.py
+# --- Legal Document Summarizer ---
+APP_VENV_PYTHON=/path/to/Indian_Legal_doc_Summarizer/.venv/bin/python
+STREAMLIT_APP_PATH=/path/to/Indian_Legal_doc_Summarizer/app.py
 
-# --- Constants for Multimodal RAG Tool ---
-# Note: The assistant_agent.py script automatically calculates these paths
-# based on its own location. Adjust if your directory structure is different.
-# MULTIMODAL_VENV_PYTHON=/path/to/your/Multimodal_server/.venv/bin/python
-# AGENTIC_RAG_PATH=/path/to/your/Multimodal_server/main.py
+# --- Multimodal Search Tool ---
+# MULTIMODAL_VENV_PYTHON=/path/to/Multimodal_server/.venv/bin/python
+# AGENTIC_RAG_PATH=/path/to/Multimodal_server/main.py
 
 
+💡 Paths are auto-detected by the assistant, but you can override them.
 
-5. Pull Ollama ModelEnsure you have Ollama installed and running. Then, pull the required language model (default is llama3:instruct).ollama pull llama3:instruct
+Pull the Ollama Model
+
+ollama pull llama3:instruct
+
+▶️ Running the Assistant
+
+Activate the Virtual Environment
+
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 
 
+Start the Assistant
 
-Running the AI AssistantOnce all the dependencies are installed and the environment variables are set up, you can start the assistant.Activate the Virtual EnvironmentIf you've closed your terminal, remember to reactivate the virtual environment.source .venv/bin/activate  # Use `.venv\Scripts\activate` on Windows
-
-
-
-Start the AssistantRun the main Python script for the assistant agent.python agents/assistant_agent.py
+python agents/assistant_agent.py
 
 
+The assistant will start and wait for user input.
 
-The assistant will start and prompt you for input.Using the ToolsThe assistant will automatically route your requests to the correct tool.To Summarize a Legal Document: Just type a request like "summarize a legal document." The assistant will launch the Streamlit app, which you can then access in your web browser at http://localhost:8501.To Perform a Multimodal Search: Type a request such as "search for locations." The assistant will execute the Agentic RAG script to handle your query.To exit the assistant, simply type exit or quit when prompted
+🧰 Using the Tools
+✅ Legal Document Summarization
+
+Say something like:
+
+summarize a legal document
+
+
+This will launch the Streamlit app.
+
+Visit: http://localhost:8501
+ in your browser.
+
+✅ Multimodal Location Search
+
+Say something like:
+
+search for locations
+
+
+This triggers the Agentic RAG module to process your query.
+
+❌ Exit the Assistant
+
+To quit, simply type:
+
+exit
+
+
+or
+
+quit
