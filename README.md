@@ -29,12 +29,14 @@ The project has a modular structure to keep different functionalities separate a
         └── main.py
 
 
+
 Setup
 Follow these steps to get the project running on your local machine.
 
 1. Clone the Repository
 git clone <repository_url>
 cd <repository_directory>
+
 
 
 2. Create and Activate a Virtual Environment
@@ -44,10 +46,12 @@ python -m venv .venv
 source .venv/bin/activate  # Use `.venv\Scripts\activate` on Windows
 
 
+
 3. Install Dependencies
 Install the required Python packages from the autogen_requirements.txt file.
 
 pip install -r autogen_requirements.txt
+
 
 
 4. Configure Environment Variables
@@ -67,10 +71,12 @@ STREAMLIT_APP_PATH=/path/to/your/Indian_Legal_doc_Summarizer/app.py
 # AGENTIC_RAG_PATH=/path/to/your/Multimodal_server/main.py
 
 
+
 5. Pull Ollama Model
 Ensure you have Ollama installed and running. Then, pull the required language model (default is llama3:instruct).
 
 ollama pull llama3:instruct
+
 
 
 Running the AI Assistant
@@ -82,10 +88,12 @@ If you've closed your terminal, remember to reactivate the virtual environment.
 source .venv/bin/activate  # Use `.venv\Scripts\activate` on Windows
 
 
+
 Start the Assistant
 Run the main Python script for the assistant agent.
 
 python agents/assistant_agent.py
+
 
 
 The assistant will start and prompt you for input.
@@ -97,4 +105,4 @@ To Summarize a Legal Document: Just type a request like "summarize a legal docum
 
 To Perform a Multimodal Search: Type a request such as "search for locations." The assistant will execute the Agentic RAG script to handle your query.
 
-To exit the assistant, simply type exit or quit when prompted.
+To exit the assistant, simply type exit or quit when prompted
