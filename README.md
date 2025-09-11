@@ -1,4 +1,3 @@
-Got it — here is a **single, clean, copy-paste-ready `README.md`** that includes all your content, fully formatted in Markdown:
 
 ---
 
